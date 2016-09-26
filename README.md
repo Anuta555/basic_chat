@@ -1,0 +1,1 @@
+A very basic node.js-based chat implemented for educational purposes.
