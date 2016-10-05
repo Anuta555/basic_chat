@@ -19,8 +19,14 @@ body {
   padding-bottom: 2.3em;
   overflow:auto;
 }
-
-
+/*==============================
+  #LOGOUT URL
+================================*/
+a {
+  padding: 12px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  color: #00B7FF;
+}
 
 /*==============================
   #MESSAGE-INPUT-FORM
