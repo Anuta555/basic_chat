@@ -24,7 +24,7 @@ var server = http.createServer(app);
 /**
  * Create sockets over the server.
  */
-require('../routes/chat_sockets.js')(server, app.passport, app.mongoStore);
+require('../routes/chat_sockets.js')(server);
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -1,6 +1,8 @@
-
-module.exports = function(server, passport, mongoStore) {
+module.exports = function(server) {
     var msg_db = [];
+
+    var MongoStore = require('connect-mongo')(require('express-session'));
+    var mongoStore = new MongoStore({ url: 'mongodb://localhost/basic_chat' });
 
     var socketio = require('socket.io');
     var passportSocketIo = require('passport.socketio');
@@ -9,27 +11,13 @@ module.exports = function(server, passport, mongoStore) {
     var io = socketio(server);
 
     io.use(passportSocketIo.authorize({
-//         cookieParser: cookieParser,
         key:          'connect.sid',
-        secret:       'aaa',
+        secret:       process.env.SECRET_KEY_BASE,
         store:        mongoStore,
-        success:      onAuthorizeSuccess,
-        fail:         onAuthorizeFail,
-        passport:     passport
     }));
 
-    function onAuthorizeSuccess(data, accept){
-        console.log('successful connection to socket.io');
-        accept();
-    }
-
-    function onAuthorizeFail(data, message, error, accept){
-        if(error)
-            accept(new Error(message));
-        console.log('failed connection to socket.io:', message);
-    }
-
     io.on('connection', function(socket){
+        console.log(socket.request.user);
         const user_connected = 'user connected'.fontcolor("green");
         msg_db.push(user_connected);
         socket.emit('chat_message', msg_db.join('<br>'));
