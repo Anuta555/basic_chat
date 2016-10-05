@@ -6,7 +6,6 @@ module.exports = function(server) {
 
     var socketio = require('socket.io');
     var passportSocketIo = require('passport.socketio');
-//     var cookieParser = require('cookie-parser');
 
     var io = socketio(server);
 
@@ -17,21 +16,19 @@ module.exports = function(server) {
     }));
 
     io.on('connection', function(socket){
-        console.log(socket.request.user);
-        const user_connected = 'user connected'.fontcolor("green");
-        msg_db.push(user_connected);
-        socket.emit('chat_message', msg_db.join('<br>'));
-        socket.broadcast.emit('chat_message', user_connected);
+        socket.emit('chat_history', msg_db);
 
         socket.on('chat_message', function(msg){
-            msg_db.push(msg);
-            socket.broadcast.emit('chat_message', msg);
+            var message = JSON.stringify({
+                m: msg,
+                t: new Date().getTime(),
+                n: socket.request.user.username
+            });
+            msg_db.push(message);
+            io.emit('chat_message', message);
         });
 
         socket.on('disconnect', function(){
-            const user_disconnected = 'user disconnected'.fontcolor("red");
-            msg_db.push(user_disconnected);
-            socket.broadcast.emit('chat_message', user_disconnected);
         });
     });
 };

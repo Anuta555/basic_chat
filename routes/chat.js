@@ -3,7 +3,6 @@ module.exports = function(router) {
         if(!req.user) {
             return res.redirect('/');
         }
-//         res.render('chat', { user : req.user });
-        res.sendFile(require('path').resolve('views/index.html'));
+        res.sendFile(require('path').resolve('views/chat.html'));
     });
 };
