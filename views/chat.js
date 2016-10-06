@@ -1,3 +1,6 @@
+require('./message.tag');
+require('../public/stylesheets/chat_style.css');
+
 $( document ).ready(function() {
   var socket = io(); // initialise socket.io connection
   var messageStore = [];
