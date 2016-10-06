@@ -2,6 +2,11 @@ $( document ).ready(function() {
   var socket = io(); // initialise socket.io connection
   var messageStore = [];
 
+  function clearMessages() {
+    messageStore.length = 0
+    riot.update();
+  }
+
   function renderMessage(message) {
     message = JSON.parse(message);
     messageStore.push(message);
@@ -44,6 +49,7 @@ $( document ).ready(function() {
 
   // Load the message history
   socket.on('chat_history', function(messages) {
+    clearMessages();
     messages.map(function(message){
         renderMessage(message);
     });

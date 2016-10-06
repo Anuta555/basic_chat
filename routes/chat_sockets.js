@@ -1,5 +1,6 @@
 module.exports = function(server) {
-    var msg_db = [];
+    var redis = require('redis');
+    var redisClient = redis.createClient();
 
     var MongoStore = require('connect-mongo')(require('express-session'));
     var mongoStore = new MongoStore({ url: 'mongodb://localhost/basic_chat' });
@@ -16,7 +17,12 @@ module.exports = function(server) {
     }));
 
     io.on('connection', function(socket){
-        socket.emit('chat_history', msg_db);
+        redisClient.lrange('chat_messages', 0, -1, function(err, reply) {
+            if(err) {
+                return console.log('Chat history db error: ' + err); // TODO
+            }
+            socket.emit('chat_history', reply);
+        });
 
         socket.on('chat_message', function(msg){
             var message = JSON.stringify({
@@ -24,11 +30,13 @@ module.exports = function(server) {
                 t: new Date().getTime(),
                 n: socket.request.user.username
             });
-            msg_db.push(message);
+            redisClient.rpush('chat_messages', message);
             io.emit('chat_message', message);
         });
 
         socket.on('disconnect', function(){
         });
     });
+
+
 };
